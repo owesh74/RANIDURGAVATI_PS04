@@ -2,39 +2,39 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const connectDB = require('./config/db'); // Import DB config
+require('dotenv').config();
+
+// Database Configuration
+const connectDB = require('./config/db');
+
+// Route Imports
 const authRoutes = require('./routes/authRoutes');
 const questionRoutes = require('./routes/questionRoutes');
-const reportRoutes = require('./routes/reportRoutes')
-require('dotenv').config();
-// Inside index.js
+const reportRoutes = require('./routes/reportRoutes');
 
+// Initialize Express App
+const app = express();
 
-
-// Connect to Database
+// Connect to MongoDB Atlas
 connectDB();
 
+// --- Middleware Stack ---
+app.use(express.json()); // Parses incoming JSON requests
+app.use(cors()); // Critical: Allows React and FastAPI to communicate with this server
+app.use(helmet()); // Security headers for production-ready code
+app.use(morgan('dev')); // Logs requests to the console for easier debugging
 
-const app = express();
-// ... (rest of your existing code from Step 2)
+// --- API Routes ---
+app.use('/api/auth', authRoutes); // Auth: Signup, Login, JWT
+app.use('/api/questions', questionRoutes); // Question Engine: Fetching domain questions
+app.use('/api/reports', reportRoutes); // Reports: Saving and retrieving interview history
 
-// Middleware
-
-app.use(express.json());
-app.use(cors());
-app.use(helmet()); // Security headers
-app.use(morgan('dev')); // Logging
-app.use('/api/auth', authRoutes);
-app.use('/api/reports', reportRoutes);
-app.use('/api/questions', questionRoutes);
-app.use('/api/reports', reportRoutes);
-
-
-// Health Check Route
+// Health Check Endpoint (For testing if the server is alive)
 app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'Server is running' });
+    res.status(200).json({ status: 'Server is running', database: 'Connected' });
 });
 
+// Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
