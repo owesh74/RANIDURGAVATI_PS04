@@ -4,6 +4,8 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const connectDB = require('./config/db'); // Import DB config
 const authRoutes = require('./routes/authRoutes');
+const questionRoutes = require('./routes/questionRoutes');
+const reportRoutes = require('./routes/reportRoutes')
 require('dotenv').config();
 // Inside index.js
 
@@ -17,11 +19,16 @@ const app = express();
 // ... (rest of your existing code from Step 2)
 
 // Middleware
+
 app.use(express.json());
 app.use(cors());
 app.use(helmet()); // Security headers
 app.use(morgan('dev')); // Logging
 app.use('/api/auth', authRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/questions', questionRoutes);
+app.use('/api/reports', reportRoutes);
+
 
 // Health Check Route
 app.get('/health', (req, res) => {

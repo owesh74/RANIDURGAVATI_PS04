@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+/* Or keep the 3 lines if you prefer v3 compatibility mode */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-[#0f172a] text-white;
+}
