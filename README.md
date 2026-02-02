@@ -9,7 +9,7 @@
 
 > **Placement Tip:** Place your high-impact "Home Screen" image here to immediately show the professional UI.
 
-![Home Screen - Domain Selection](INSERT_LINK_HERE)
+![Home Screen - Domain Selection](https://github.com/owesh74/RANIDURGAVATI_PS04/blob/main/assets/homw%20screen.png)
 
 ---
 
