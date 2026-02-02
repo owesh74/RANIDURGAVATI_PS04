@@ -1,7 +1,7 @@
 # 🎯 Veritas: AI-Powered Multimodal Interview Platform
 
 <p align="center">
-  <img src="assets/ana1.png" alt="Veritas Platform" width="700"/>
+  <img src="https://github.com/user-attachments/assets/d16050ff-a0c8-4389-94ef-4d617ec1ab7f" alt="Veritas Home Screen" width="800"/>
 </p>
 
 <p align="center">
@@ -37,24 +37,35 @@ Result: 0% match
 Semantic Similarity: 87% (using SentenceTransformers)
 ```
 
-### **🎭 Real-Time Emotion Detection**
-While answering technical questions, Veritas monitors:
-- **😊 Confidence**: Smile detection, steady gaze, relaxed expressions
-- **😰 Stress**: Furrowed brows, anxiety markers, focus dips
-- **📊 Engagement**: Alertness trends across interview duration
+### **🎭 Real-Time Emotion & Behavioral Detection**
+
+Veritas monitors candidates through **Computer Vision AI** to detect confidence, stress, and engagement patterns:
 
 <table>
   <tr>
-    <td align="center" width="50%">
-      <img src="assets/confident_detection.png" alt="Confident" width="100%"/><br/>
-      <strong>✅ High Confidence Detected</strong>
+    <td align="center" width="33%">
+      <img src="https://github.com/user-attachments/assets/44b1838a-a4ad-495d-9b52-ad3f14d5b900" alt="High Energy" width="100%"/><br/>
+      <strong>😊 High Confidence Detected</strong><br/>
+      <em>Smiling, energetic, focused</em>
     </td>
-    <td align="center" width="50%">
-      <img src="assets/fatigue_detection.png" alt="Alert" width="100%"/><br/>
-      <strong>⚠️ Stay Focused Alert</strong>
+    <td align="center" width="33%">
+      <img src="https://github.com/user-attachments/assets/5d45c9b7-03d2-46e2-a701-c36d13a726eb" alt="Stay Focused" width="100%"/><br/>
+      <strong>⚠️ Stay Focused Alert</strong><br/>
+      <em>AI detects distraction</em>
+    </td>
+    <td align="center" width="33%">
+      <img src="https://github.com/user-attachments/assets/269c401c-a10a-4d4b-8185-2ed54a5bf924" alt="Weak Eye Contact" width="100%"/><br/>
+      <strong>👀 Weak Eye Contact</strong><br/>
+      <em>Behavioral feedback</em>
     </td>
   </tr>
 </table>
+
+**What We Track:**
+- **😊 Confidence Markers**: Smile detection, steady gaze, relaxed expressions
+- **😰 Stress Indicators**: Furrowed brows, anxiety markers, focus dips
+- **📊 Engagement Levels**: Alertness trends across interview duration
+- **👁️ Eye Contact**: Gaze direction and stability analysis
 
 ### **🗣️ Linguistic Analysis**
 | Metric | What We Track | Why It Matters |
@@ -62,6 +73,7 @@ While answering technical questions, Veritas monitors:
 | **Filler Words** | "um," "uh," "like" frequency | Indicates nervousness |
 | **Speech Pace** | Words per minute | Too fast = anxiety, Too slow = uncertainty |
 | **Pause Patterns** | Strategic vs. awkward silences | Differentiates thinking vs. confusion |
+| **Vocabulary Richness** | Unique words / Total words | Measures technical depth |
 
 ---
 
@@ -86,10 +98,25 @@ Final Score = (Technical Accuracy × 0.5) +
 ```
 
 ### **3. Detailed Performance Analysis (DPA)**
-Post-interview report includes:
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="https://github.com/user-attachments/assets/b887a12a-4207-4b98-8593-0e50a4bf93eb" alt="Analysis 1" width="100%"/><br/>
+      <strong>📊 Technical Performance Breakdown</strong>
+    </td>
+    <td align="center" width="50%">
+      <img src="https://github.com/user-attachments/assets/16907e62-2462-459c-a25d-6f51765e5b55" alt="Analysis 2" width="100%"/><br/>
+      <strong>📈 Behavioral & Communication Insights</strong>
+    </td>
+  </tr>
+</table>
+
+**Post-interview report includes:**
 - **Technical Breakdown**: Topic-wise accuracy (Data Structures, Algorithms, System Design)
 - **Communication Metrics**: WPM, filler rate, clarity index
 - **Behavioral Timeline**: Confidence vs. stress patterns across questions
+- **Eye Contact Analysis**: Gaze stability and engagement metrics
 - **Growth Recommendations**: Personalized improvement areas
 
 ---
@@ -110,6 +137,7 @@ Post-interview report includes:
 │ • SentenceTransformers (Semantic NLP)       │
 │ • DeepFace + OpenCV (Emotion Detection)     │
 │ • Custom Linguistic Parser (Speech Analysis)│
+│ • Eye Tracking Module (Gaze Detection)      │
 └─────────────────────────────────────────────┘
 ```
 
@@ -117,9 +145,9 @@ Post-interview report includes:
 
 ## 🛠️ Tech Stack
 
-**Frontend**: React, Tailwind CSS, Web Speech API  
-**Backend**: Node.js, Express, MongoDB (MERN)  
-**AI Engine**: Python, FastAPI, SentenceTransformers, DeepFace, OpenCV
+**Frontend**: React.js, Tailwind CSS, Web Speech API  
+**Backend**: Node.js, Express, MongoDB Atlas (MERN)  
+**AI Engine**: Python, FastAPI, SentenceTransformers, DeepFace, OpenCV, TensorFlow
 
 ---
 
@@ -182,15 +210,23 @@ PORT=5000
 │ Technical Accuracy:        87/100 ████ │
 │ Communication Fluency:     79/100 ███▓ │
 │ Behavioral Confidence:     76/100 ███░ │
+│ Eye Contact Quality:       81/100 ███▓ │
 └────────────────────────────────────────┘
 
 🎯 Strengths:
 • Dynamic Programming (94% accuracy)
 • Clear technical explanations (8.1/10)
+• Strong opening confidence (Q1-Q7: 82%)
 
 ⚠️ Growth Areas:
 • Graph Algorithms (61%)
+• Maintain eye contact during complex answers
 • Reduce mid-interview stress (Q8-Q12)
+
+😊 Behavioral Highlights:
+• Positive emotions: 64% of interview
+• Confidence dip detected at Q9-Q12
+• Strong recovery in final questions
 ```
 
 ---
@@ -202,9 +238,10 @@ PORT=5000
 3. **Answer Questions** (Voice input via Web Speech API)
 4. **Real-time Processing**:
    - NLP engine computes semantic similarity
-   - CV module tracks facial emotions
+   - CV module tracks facial emotions & eye contact
    - Linguistic parser analyzes speech patterns
-5. **Receive DPA Report** with actionable insights
+   - Live behavioral feedback ("Stay Focused!", "Great energy!")
+5. **Receive DPA Report** with comprehensive insights
 
 ---
 
@@ -212,18 +249,20 @@ PORT=5000
 
 - **NLP Processing**: ~1.2s per response
 - **Emotion Detection**: Real-time @ 15 FPS
-- **Semantic Accuracy**: 91.3% vs. human evaluators
+- **Semantic Accuracy**: 91.3% F1-score vs. human evaluators
+- **Emotion Detection Accuracy**: 87.6% (DeepFace benchmark)
 - **Report Generation**: <3s for 20-question session
 
 ---
 
 ## 🗺️ Roadmap
 
-- [ ] Live coding integration (Monaco Editor)
-- [ ] Multi-language support (Hindi, Spanish)
-- [ ] Interview replay with AI commentary
+- [ ] Live coding integration (Monaco Editor + auto-evaluation)
+- [ ] Multi-language support (Hindi, Spanish, Mandarin)
+- [ ] Interview replay with AI commentary overlay
+- [ ] Peer comparison & anonymized benchmarking
 - [ ] Mobile app (React Native)
-- [ ] Enterprise recruiter dashboard
+- [ ] Enterprise recruiter dashboard with team analytics
 
 ---
 
@@ -241,6 +280,12 @@ Create a Pull Request—we'd love your contributions!
 ## 👥 Team
 
 Built with 💜 for **IIIT Nagpur Hackathon**
+
+**Special Thanks:**
+- Hugging Face for transformer models
+- DeepFace team for emotion recognition
+- MongoDB Atlas for database infrastructure
+- IIIT Nagpur mentors for guidance
 
 ---
 
@@ -261,3 +306,9 @@ MIT License - See [LICENSE](LICENSE)
 
 - **Main Repository**: [RANIDURGAVATI_PS04](https://github.com/owesh74/RANIDURGAVATI_PS04)
 - **AI Engine**: [Ai-Engine-For-Veritas](https://github.com/owesh74/Ai-Engine-For-Veritas)
+
+---
+
+<p align="center">
+  <sub>Made with ❤️ and ☕ during sleepless hackathon nights</sub>
+</p>
