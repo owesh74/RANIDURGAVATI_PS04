@@ -3,15 +3,17 @@
 
 **Veritas** is a high-performance, full-stack AI interview platform developed for the **IIIT Nagpur Hackathon**. It moves beyond simple keyword matching by using a **Multimodal Fusion Engine** to evaluate candidates through three critical lenses: **Technical Accuracy (NLP)**, **Verbal Fluency (Linguistics)**, and **Behavioral Resilience (Computer Vision)**.
 
----
+ 
 
 ## 📽️ Live Demonstration & Visuals
 
 > **Placement Tip:** Place your high-impact "Home Screen" image here to immediately show the professional UI.
 
-![Home Screen - Domain Selection](https://github.com/owesh74/RANIDURGAVATI_PS04/raw/main/assets/ana1.png)
+![Home Screen](assets/ana1.png)
 
----
+
+
+
 
 ## 🌟 Key Features
 
