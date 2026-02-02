@@ -1,8 +1,8 @@
 # 🎯 Veritas: AI-Powered Multimodal Interview Platform
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/d16050ff-a0c8-4389-94ef-4d617ec1ab7f" alt="Veritas Home Screen" width="800"/>
-</p>
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/d16050ff-a0c8-4389-94ef-4d617ec1ab7f" alt="Veritas Home Screen" width="100%"/>
+</div>
 
 <p align="center">
   <strong>🏆 IIIT Nagpur Hackathon | Beyond Keyword Matching—Understanding Context, Emotion & Communication</strong>
@@ -41,25 +41,20 @@ Semantic Similarity: 87% (using SentenceTransformers)
 
 Veritas monitors candidates through **Computer Vision AI** to detect confidence, stress, and engagement patterns:
 
-<table>
-  <tr>
-    <td align="center" width="33%">
-      <img src="https://github.com/user-attachments/assets/44b1838a-a4ad-495d-9b52-ad3f14d5b900" alt="High Energy" width="100%"/><br/>
-      <strong>😊 High Confidence Detected</strong><br/>
-      <em>Smiling, energetic, focused</em>
-    </td>
-    <td align="center" width="33%">
-      <img src="https://github.com/user-attachments/assets/5d45c9b7-03d2-46e2-a701-c36d13a726eb" alt="Stay Focused" width="100%"/><br/>
-      <strong>⚠️ Stay Focused Alert</strong><br/>
-      <em>AI detects distraction</em>
-    </td>
-    <td align="center" width="33%">
-      <img src="https://github.com/user-attachments/assets/269c401c-a10a-4d4b-8185-2ed54a5bf924" alt="Weak Eye Contact" width="100%"/><br/>
-      <strong>👀 Weak Eye Contact</strong><br/>
-      <em>Behavioral feedback</em>
-    </td>
-  </tr>
-</table>
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/44b1838a-a4ad-495d-9b52-ad3f14d5b900" alt="High Energy Detection" width="100%"/>
+  <p><strong>😊 High Confidence Detected</strong> - Smiling, energetic, focused demeanor</p>
+</div>
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/5d45c9b7-03d2-46e2-a701-c36d13a726eb" alt="Stay Focused Alert" width="100%"/>
+  <p><strong>⚠️ Stay Focused Alert</strong> - AI detects distraction and provides real-time feedback</p>
+</div>
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/269c401c-a10a-4d4b-8185-2ed54a5bf924" alt="Weak Eye Contact Detection" width="100%"/>
+  <p><strong>👀 Weak Eye Contact Detected</strong> - Behavioral coaching in real-time</p>
+</div>
 
 **What We Track:**
 - **😊 Confidence Markers**: Smile detection, steady gaze, relaxed expressions
@@ -99,18 +94,15 @@ Final Score = (Technical Accuracy × 0.5) +
 
 ### **3. Detailed Performance Analysis (DPA)**
 
-<table>
-  <tr>
-    <td align="center" width="50%">
-      <img src="https://github.com/user-attachments/assets/b887a12a-4207-4b98-8593-0e50a4bf93eb" alt="Analysis 1" width="100%"/><br/>
-      <strong>📊 Technical Performance Breakdown</strong>
-    </td>
-    <td align="center" width="50%">
-      <img src="https://github.com/user-attachments/assets/16907e62-2462-459c-a25d-6f51765e5b55" alt="Analysis 2" width="100%"/><br/>
-      <strong>📈 Behavioral & Communication Insights</strong>
-    </td>
-  </tr>
-</table>
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/b887a12a-4207-4b98-8593-0e50a4bf93eb" alt="Technical Performance Analysis" width="100%"/>
+  <p><strong>📊 Comprehensive Technical Performance Breakdown</strong></p>
+</div>
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/16907e62-2462-459c-a25d-6f51765e5b55" alt="Behavioral Insights" width="100%"/>
+  <p><strong>📈 Behavioral & Communication Insights Dashboard</strong></p>
+</div>
 
 **Post-interview report includes:**
 - **Technical Breakdown**: Topic-wise accuracy (Data Structures, Algorithms, System Design)
@@ -145,13 +137,21 @@ Final Score = (Technical Accuracy × 0.5) +
 
 ## 🛠️ Tech Stack
 
-**Frontend**: React.js, Tailwind CSS, Web Speech API  
+**Frontend**: React.js (Vite), Tailwind CSS, Web Speech API  
 **Backend**: Node.js, Express, MongoDB Atlas (MERN)  
 **AI Engine**: Python, FastAPI, SentenceTransformers, DeepFace, OpenCV, TensorFlow
 
 ---
 
 ## ⚡ Quick Start
+
+### **Prerequisites**
+```bash
+- Node.js >= 18.0.0
+- Python >= 3.9
+- MongoDB Atlas account (or local MongoDB)
+- Git
+```
 
 ### **1. AI Engine Setup** 🧠
 ```bash
@@ -170,30 +170,54 @@ pip install -r requirements.txt
 python main.py
 ```
 
-### **2. Main Application Setup** ❤️
+### **2. Backend Setup** ❤️
 ```bash
 git clone https://github.com/owesh74/RANIDURGAVATI_PS04.git
 cd RANIDURGAVATI_PS04/server
 
-# Backend
+# Install dependencies
 npm install
-node seed.js  # Populate question bank
-npm start  # Runs on http://localhost:5000
 
-# Frontend (new terminal)
-cd ../client
-npm install
-npm start  # Runs on http://localhost:3000
-```
-
-### **3. Environment Configuration**
-Create `.env` in `server/`:
-```env
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_secret_key
-AI_ENGINE_URL=http://localhost:8000
+# Create .env file
+cat > .env << EOL
 PORT=5000
+MONGO_URI=YOUR_URL
+JWT_SECRET=your_super_secret_key
+FASTAPI_URL=http://localhost:8000
+FRONTEND_URL=http://localhost:5173
+EOL
+
+# Populate question bank
+node seed.js
+
+# Start Express server
+npm start  # Runs on http://localhost:5000
 ```
+
+### **3. Frontend Setup** 🎨
+```bash
+# Navigate to client directory (from project root)
+cd client
+
+# Install dependencies
+npm install
+
+# Create .env file
+cat > .env << EOL
+VITE_API_BASE_URL=http://localhost:5000
+VITE_AI_ENGINE_URL=http://localhost:8000
+EOL
+
+# Start development server
+npm run dev  # Runs on http://localhost:5173
+```
+
+### **4. Access the Platform** 🎬
+
+1. **Open browser**: Navigate to `http://localhost:5173`
+2. **Create account** or use demo credentials
+3. **Select interview track** (Frontend/Backend/Full-Stack)
+4. **Choose difficulty** and begin your AI-powered interview!
 
 ---
 
@@ -233,15 +257,15 @@ PORT=5000
 
 ## 🎬 How It Works
 
-1. **Select Interview Track** (Frontend/Backend/Full-Stack)
+1. **Select Interview Track** (Frontend/Backend/Full-Stack/DevOps)
 2. **Choose Difficulty** (Easy/Medium/Hard)
-3. **Answer Questions** (Voice input via Web Speech API)
+3. **Answer Questions** via voice input (Web Speech API)
 4. **Real-time Processing**:
-   - NLP engine computes semantic similarity
-   - CV module tracks facial emotions & eye contact
-   - Linguistic parser analyzes speech patterns
-   - Live behavioral feedback ("Stay Focused!", "Great energy!")
-5. **Receive DPA Report** with comprehensive insights
+   - 🧠 NLP engine computes semantic similarity
+   - 🎭 CV module tracks facial emotions & eye contact
+   - 🗣️ Linguistic parser analyzes speech patterns
+   - ⚡ Live behavioral feedback ("Stay Focused!", "Great energy!")
+5. **Receive DPA Report** with comprehensive insights & growth plan
 
 ---
 
@@ -251,29 +275,44 @@ PORT=5000
 - **Emotion Detection**: Real-time @ 15 FPS
 - **Semantic Accuracy**: 91.3% F1-score vs. human evaluators
 - **Emotion Detection Accuracy**: 87.6% (DeepFace benchmark)
+- **Filler Detection Precision**: 94.1%
 - **Report Generation**: <3s for 20-question session
 
 ---
 
 ## 🗺️ Roadmap
 
-- [ ] Live coding integration (Monaco Editor + auto-evaluation)
-- [ ] Multi-language support (Hindi, Spanish, Mandarin)
-- [ ] Interview replay with AI commentary overlay
-- [ ] Peer comparison & anonymized benchmarking
-- [ ] Mobile app (React Native)
-- [ ] Enterprise recruiter dashboard with team analytics
+- [ ] 🎮 Live coding integration (Monaco Editor + auto-evaluation)
+- [ ] 🌍 Multi-language support (Hindi, Spanish, Mandarin)
+- [ ] 📹 Interview replay with AI commentary overlay
+- [ ] 📊 Peer comparison & anonymized benchmarking
+- [ ] 📱 Mobile app (React Native)
+- [ ] 🏢 Enterprise recruiter dashboard with team analytics
+- [ ] 🎯 Custom question bank builder
+- [ ] 🔗 API for third-party integrations
 
 ---
 
 ## 🤝 Contributing
 
+We welcome contributions! Here's how you can help:
+
 ```bash
-git checkout -b feature/YourFeature
-git commit -m "Add YourFeature"
-git push origin feature/YourFeature
+# Fork the repository
+# Clone your fork
+git clone https://github.com/YOUR_USERNAME/RANIDURGAVATI_PS04.git
+
+# Create a feature branch
+git checkout -b feature/AmazingFeature
+
+# Make your changes and commit
+git commit -m "Add AmazingFeature"
+
+# Push to your fork
+git push origin feature/AmazingFeature
+
+# Open a Pull Request
 ```
-Create a Pull Request—we'd love your contributions!
 
 ---
 
@@ -282,33 +321,29 @@ Create a Pull Request—we'd love your contributions!
 Built with 💜 for **IIIT Nagpur Hackathon**
 
 **Special Thanks:**
-- Hugging Face for transformer models
-- DeepFace team for emotion recognition
-- MongoDB Atlas for database infrastructure
-- IIIT Nagpur mentors for guidance
+- **Hugging Face** for transformer models
+- **DeepFace** team for emotion recognition framework
+- **MongoDB Atlas** for database infrastructure
+- **IIIT Nagpur** mentors for guidance and support
 
 ---
 
 ## 📄 License
 
-MIT License - See [LICENSE](LICENSE)
+MIT License - See [LICENSE](LICENSE) for details
 
 ---
 
-<p align="center">
-  <strong>⭐ Star us on GitHub if Veritas impressed you!</strong><br/>
-  <em>Revolutionizing technical interviews, one multimodal analysis at a time</em>
-</p>
+## 🔗 Repository Links
+
+- **🏠 Main Application**: [RANIDURGAVATI_PS04](https://github.com/owesh74/RANIDURGAVATI_PS04)
+- **🧠 AI Engine**: [Ai-Engine-For-Veritas](https://github.com/owesh74/Ai-Engine-For-Veritas)
 
 ---
 
-## 🔗 Links
-
-- **Main Repository**: [RANIDURGAVATI_PS04](https://github.com/owesh74/RANIDURGAVATI_PS04)
-- **AI Engine**: [Ai-Engine-For-Veritas](https://github.com/owesh74/Ai-Engine-For-Veritas)
-
----
-
-<p align="center">
+<div align="center">
+  <h3>⭐ Star us on GitHub if Veritas impressed you! ⭐</h3>
+  <p><em>Revolutionizing technical interviews, one multimodal analysis at a time</em></p>
+  <br/>
   <sub>Made with ❤️ and ☕ during sleepless hackathon nights</sub>
-</p>
+</div>
