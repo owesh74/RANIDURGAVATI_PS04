@@ -6,6 +6,7 @@
 
 <p align="center">
   <strong>🏆 IIIT Nagpur Hackathon | Beyond Keyword Matching—Understanding Context, Emotion & Communication</strong>
+  <strong>Veritas solves this with a Multimodal Fusion Engine powered by 1500+ questions across 14+ technical domains.</strong>
 </p>
 
 <p align="center">
