@@ -24,7 +24,13 @@ Veritas doesn't just read your text; it feels your performance.
 * **Linguistic Analysis:** Detects verbal fillers (um, uh, like) and calculates a realistic Fluency Score based on speech pace.
 
 ### 2. ⚡ Rapid Fire Technical Engine
-Designed to test endurance and quick thinking.
+Designed to test endurance and quick thinking.<img width="1919" height="1079" alt="foc" src="https://github.com/user-attachments/assets/5d45c9b7-03d2-46e2-a701-c36d13a726eb" />
+<img width="1919" height="1079" alt="ene" src="https://github.com/user-attachments/assets/44b1838a-a4ad-495d-9b52-ad3f14d5b900" />
+<img width="1919" height="1079" alt="eye" src="https://github.com/user-attachments/assets/269c401c-a10a-4d4b-8185-2ed54a5bf924" />
+<img width="1919" height="1079" alt="ana2" src="https://github.com/user-attachments/assets/b887a12a-4207-4b98-8593-0e50a4bf93eb" />
+<img width="1919" height="1076" alt="ana1" src="https://github.com/user-attachments/assets/16907e62-2462-459c-a25d-6f51765e5b55" />
+<img width="1919" height="1079" alt="homw screen" src="https://github.com/user-attachments/assets/d16050ff-a0c8-4389-94ef-4d617ec1ab7f" />
+
 * **Difficulty Tiers:** Easy (5 Qs), Medium (10 Qs), and Hard (20 Qs) rounds.
 * **Zero-Repeat Logic:** Smart session tracking ensures you never get the same question twice in a single session.
 
