@@ -20,7 +20,10 @@ connectDB();
 
 // --- Middleware Stack ---
 app.use(express.json()); // Parses incoming JSON requests
-app.use(cors()); // Critical: Allows React and FastAPI to communicate with this server
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  methods: ["GET", "POST"]
+})); // Critical: Allows React and FastAPI to communicate with this server
 app.use(helmet()); // Security headers for production-ready code
 app.use(morgan('dev')); // Logs requests to the console for easier debugging
 

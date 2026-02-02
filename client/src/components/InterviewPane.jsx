@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import useSpeechToText from '../hooks/useSpeechToText';
 import VideoCanvas from './VideoCanvas';
 
 const InterviewPane = ({ config }) => {
-  // 1. Dynamic Session Configuration
   const totalRounds = config.rounds || (
     config.difficulty === 'Easy' ? 5 : 
     config.difficulty === 'Hard' ? 20 : 10
@@ -17,233 +16,218 @@ const InterviewPane = ({ config }) => {
   const [isFinished, setIsFinished] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // 2. Hardware Tracking
-  const { transcript, isListening, startListening, stopListening, resetTranscript } = useSpeechToText();
-  const micActive = isListening || !!transcript;
+  // AI COACHING STATES
+  const [aiCue, setAiCue] = useState("AI Coach: Ready");
+  const [isAnxious, setIsAnxious] = useState(false);
 
-  // FIX 1: Overwrite answer with ONLY the current transcript
+  // QUESTION TRACKING STATE (No Repetition)
+  const [usedQuestionIds, setUsedQuestionIds] = useState([]);
+
+  // 1. STABLE HARDWARE HOOK
+  const { 
+    transcript, 
+    isListening, 
+    startListening, 
+    stopListening, 
+    resetTranscript 
+  } = useSpeechToText();
+
+  // FIX: Stable transcript sync (prevents appending/duplicating)
   useEffect(() => { 
-    if (transcript) {
+    if (transcript !== undefined) {
       setAnswer(transcript); 
     }
   }, [transcript]);
 
-  // 3. Fetching Questions
-  const fetchNextQuestion = async () => {
-    try {
-      const res = await axios.get(`http://localhost:5000/api/questions/fetch?domain=${config.domain}`);
-      setQuestionData(res.data);
-    } catch (err) {
-      console.error("Error fetching question.");
+  // 2. STABLE RECORDING TOGGLE
+  const toggleRecording = useCallback(() => {
+    if (isListening) {
+      stopListening();
+    } else {
+      // Clear before starting a fresh recording
+      if (resetTranscript) resetTranscript();
+      setAnswer("");
+      startListening({ continuous: true, language: 'en-IN' });
     }
-  };
+  }, [isListening, startListening, stopListening, resetTranscript]);
 
+ // 1. Maintain the tracking state
+
+
+const fetchNextQuestion = async () => {
+  setLoading(true);
+  try {
+   const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/questions/fetch`, {
+      params: { 
+        domain: config.domain,
+        difficulty: config.difficulty,
+        // Pass the array of IDs we've already seen
+        exclude: usedQuestionIds 
+      }
+    });
+
+    if (res.data && res.data.question) {
+      setQuestionData(res.data);
+      // Append the NEW question ID to the list
+      setUsedQuestionIds(prev => [...prev, res.data.id || res.data._id]); 
+    }
+  } catch (err) {
+    console.error("handshake failed", err);
+  } finally {
+    setLoading(false);
+  }
+};
   useEffect(() => { fetchNextQuestion(); }, [round]);
 
-  const handleNextRound = async () => {
-    if (!answer && !loading) return;
-    setLoading(true);
-    
-    try {
-      // 4. AI Verification Call
-      const res = await axios.post('http://localhost:8000/verify_answer', {
-        user_answer: answer,
-        ideal_answer: questionData.ideal_answer,
-        mic_on: micActive
-      });
-
-      // Store round data for final analysis
-      setSessionHistory(prev => [...prev, {
-        round,
-        question: questionData.question,
-        wasCorrect: res.data.is_correct,
-        accuracy: res.data.similarity_score,
-        fluency: res.data.fluency_score,
-        fillers: res.data.fillers_detected,
-        micUsed: micActive,
-        videoUsed: true 
-      }]);
-
-      if (round < totalRounds) {
-        // FIX 2: THE NUCLEAR RESET
-        setAnswer(""); 
-        if (resetTranscript) {
-          resetTranscript();
+  // AI COACHING EFFECT - Polls every 3 seconds for live behavioral analysis
+  useEffect(() => {
+    let coachTimer;
+    if (isListening && !loading) {
+      coachTimer = setInterval(async () => {
+        const canvas = document.querySelector('canvas'); 
+        
+        if (canvas) {
+          try {
+            const frame = canvas.toDataURL('image/jpeg', 0.5);
+            const res = await axios.post(`${import.meta.env.VITE_AI_ENGINE_URL}/analyze_behavior`, {
+              video_on: true,
+              image_data: frame
+            });
+            
+            if (res.data.cue) {
+              setAiCue(res.data.cue);
+              setIsAnxious(res.data.emotion === 'fear' || res.data.emotion === 'sad');
+            }
+          } catch (e) {
+            setAiCue("AI Coach: Engine Offline");
+          }
+        } else {
+          setAiCue("AI Coach: Adjusting Camera...");
         }
-        setRound(prev => prev + 1);
-      } else {
-        setIsFinished(true);
-      }
-    } catch (err) {
-      alert("AI Engine Connection Failed. Ensure FastAPI is on port 8000.");
+      }, 3000);
     }
+    return () => clearInterval(coachTimer);
+  }, [isListening, loading]);
+
+  // 3. THE "NO-BUG" ROUND TRANSITION WITH CHEATING DETECTION
+// This function must live inside your InterviewPane component
+const handleNextRound = async () => {
+  if (!answer && !loading) return;
+  setLoading(true);
+  
+  // Stop recording immediately to finalize the current round's text
+  stopListening(); 
+
+  try {
+    const res = await axios.post(`${import.meta.env.VITE_AI_ENGINE_URL}/verify_answer`, {
+      user_answer: answer,
+      ideal_answer: questionData.ideal_answer,
+      mic_on: !!transcript
+    });
+
+    // Save session history for the final analysis
+    setSessionHistory(prev => [...prev, {
+      round,
+      question: questionData.question,
+      userAnswer: answer,
+      idealAnswer: questionData.ideal_answer,
+      wasCorrect: res.data.is_correct,
+      accuracy: res.data.similarity_score,
+      fluency: res.data.fluency_score
+    }]);
+
+    // Update tracking for unique questions
+    setUsedQuestionIds(prev => [...prev, questionData.id]);
+
+    if (round < totalRounds) {
+      // ATOMIC RESET: Clears state for the fresh round
+      setAnswer(""); 
+      if (resetTranscript) resetTranscript(); 
+
+      setRound(prev => prev + 1);
+
+      // Delayed Mic Restart to ensure the browser has flushed the old audio stream
+      setTimeout(() => {
+        startListening({ continuous: true, language: 'en-IN' });
+      }, 500); 
+
+    } else {
+      setIsFinished(true);
+    }
+  } catch (err) {
+    alert("AI Engine Connection Failed.");
+  } finally {
     setLoading(false);
-  };
+  }
+};
 
   if (isFinished) return <DetailedPersonAnalysis history={sessionHistory} total={totalRounds} />;
 
   return (
-    <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
-      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start animate-fade-in-up">
-        {/* Left: Live Vision & Progress */}
+    <div className="max-w-7xl mx-auto w-full px-4 py-10 text-left">
+      <div className="flex flex-col lg:flex-row gap-8 items-start">
+        {/* Left Visuals */}
         <aside className="w-full lg:w-1/3 space-y-6">
-          {/* Video Canvas with Enhanced Frame */}
-          <div className="relative overflow-hidden rounded-3xl shadow-2xl ring-1 ring-white/10 group">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+          <div className="relative overflow-hidden rounded-3xl shadow-2xl ring-4 ring-blue-500/10">
             <VideoCanvas />
+            
+            {/* LIVE AI COACH OVERLAY */}
+            <div className={`absolute bottom-6 left-6 right-6 p-4 rounded-2xl backdrop-blur-md border transition-all duration-500 ${
+              isAnxious ? 'bg-red-900/40 border-red-500/50' : 'bg-slate-900/60 border-white/10'
+            }`}>
+              <div className="flex items-center gap-2 mb-1">
+                <span className={`w-2 h-2 rounded-full ${isAnxious ? 'bg-red-500 animate-ping' : 'bg-emerald-500 animate-pulse'}`}></span>
+                <p className="text-[10px] font-bold text-white/70 uppercase tracking-widest">Live AI Guidance</p>
+              </div>
+              <p className="text-white text-sm font-medium italic leading-snug">
+                "{aiCue}"
+              </p>
+            </div>
           </div>
           
-          {/* Enhanced Progress Card */}
-          <div className="relative p-8 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800/90 rounded-3xl border border-blue-500/20 shadow-2xl shadow-blue-500/10 overflow-hidden backdrop-blur-sm">
-            {/* Decorative Elements */}
-            <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-500/5 rounded-full blur-2xl"></div>
-            
-            <div className="relative z-10">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse-fast"></div>
-                <p className="text-blue-400 font-bold text-xs uppercase tracking-widest">Rapid Fire Progress</p>
-              </div>
-              
-              <div className="flex items-baseline gap-3 mb-6">
-                <p className="text-6xl font-black text-white tabular-nums tracking-tight">{round}</p>
-                <span className="text-slate-500 text-3xl font-semibold">/ {totalRounds}</span>
-              </div>
-              
-              {/* Enhanced Progress Bar */}
-              <div className="space-y-2">
-                <div className="relative w-full bg-slate-800/80 h-3 rounded-full overflow-hidden ring-1 ring-white/5">
-                  <div 
-                    className="absolute inset-0 bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 h-full transition-all duration-700 ease-out shadow-lg shadow-blue-500/50" 
-                    style={{ width: `${(round / totalRounds) * 100}%` }}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-slate-500 font-medium">Progress</span>
-                  <span className="text-blue-400 font-bold tabular-nums">
-                    {Math.round((round / totalRounds) * 100)}%
-                  </span>
-                </div>
-              </div>
-            </div>
+          <div className="p-8 bg-slate-900 rounded-3xl border border-blue-500/20">
+            <p className="text-blue-400 font-bold text-xs uppercase tracking-widest mb-2">Round Progress</p>
+            <p className="text-6xl font-black text-white">{round} <span className="text-slate-600 text-3xl">/ {totalRounds}</span></p>
           </div>
         </aside>
 
-        {/* Right: Question & Input */}
-        <main className="flex-1 min-w-0">
-          <div className="relative bg-gradient-to-br from-slate-800 via-slate-800/95 to-slate-900 p-8 lg:p-12 rounded-[2rem] lg:rounded-[2.5rem] border border-slate-700/50 shadow-2xl overflow-hidden backdrop-blur-sm">
-            {/* Decorative Background */}
-            <div className="absolute top-0 left-0 w-72 h-72 bg-purple-500/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
-            
-            <div className="relative z-10 space-y-8">
-              {/* Question Header */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <span className="px-4 py-1.5 bg-blue-500/10 text-blue-400 text-xs font-bold uppercase tracking-wide rounded-full border border-blue-500/20 shadow-sm">
-                    Question {round}
-                  </span>
-                  <div className="h-px flex-1 bg-gradient-to-r from-blue-500/20 to-transparent"></div>
-                </div>
-                
-                <h2 className="text-2xl lg:text-3xl font-bold text-white leading-relaxed min-h-[4rem] flex items-center">
-                  {questionData?.question ? (
-                    <span className="animate-fade-in-slide">
-                      {questionData.question}
-                    </span>
-                  ) : (
-                    <span className="text-slate-500 flex items-center gap-3">
-                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Selecting next challenge...
-                    </span>
-                  )}
-                </h2>
-              </div>
+        {/* Right Interaction Area */}
+        <main className="flex-1 bg-slate-800 p-10 rounded-[2.5rem] border border-slate-700 shadow-2xl space-y-8">
+          <h2 className="text-3xl font-bold text-white leading-tight">
+            {questionData?.question || "Selecting next challenge..."}
+          </h2>
 
-              {/* Enhanced Answer Textarea */}
-              <div className="relative group/textarea">
-                <textarea 
-                  className="w-full h-72 p-6 bg-slate-900/80 border border-slate-700 hover:border-slate-600 focus:border-blue-500/50 rounded-2xl text-white text-base leading-relaxed outline-none focus:ring-2 focus:ring-blue-500/30 transition-all duration-300 resize-none placeholder:text-slate-600 shadow-inner backdrop-blur-sm"
-                  value={answer}
-                  onChange={(e) => setAnswer(e.target.value)}
-                  placeholder="Answer using voice or keyboard..."
-                  disabled={loading}
-                />
-                
-                {/* Enhanced Character Counter */}
-                <div className="absolute bottom-4 right-4 flex items-center gap-3">
-                  {answer && (
-                    <span className="text-xs text-slate-600 font-mono bg-slate-800/80 px-2 py-1 rounded backdrop-blur-sm">
-                      {answer.length} characters
-                    </span>
-                  )}
-                </div>
-                
-                {/* Subtle Border Glow on Focus */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/0 via-blue-500/0 to-blue-500/0 opacity-0 group-focus-within/textarea:opacity-100 transition-opacity duration-500 pointer-events-none -z-10 blur-xl"></div>
+          <div className="relative">
+            <textarea 
+              className="w-full h-64 p-6 bg-slate-900 border border-slate-700 rounded-2xl text-white text-lg outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none"
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              placeholder="Speak your answer clearly..."
+            />
+            {isListening && (
+              <div className="absolute top-4 right-4 flex gap-1">
+                <span className="w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+                <span className="text-[10px] text-red-500 font-bold uppercase tracking-tighter">Live</span>
               </div>
+            )}
+          </div>
 
-              {/* Enhanced Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4">
-                {/* Microphone Button */}
-                <button 
-                  onClick={isListening ? stopListening : startListening}
-                  disabled={loading}
-                  className={`group/mic relative flex-1 py-5 px-6 rounded-2xl font-bold transition-all duration-300 flex items-center justify-center gap-3 overflow-hidden shadow-lg ${
-                    isListening 
-                      ? 'bg-gradient-to-r from-red-600 to-red-500 shadow-red-900/50 text-white ring-2 ring-red-400/50 scale-[1.02]' 
-                      : 'bg-slate-700/80 hover:bg-slate-600/90 text-slate-300 hover:text-white hover:shadow-xl'
-                  } disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-700/80`}
-                >
-                  {/* Background Effects */}
-                  {isListening && (
-                    <>
-                      <span className="absolute inset-0 bg-red-400/20 animate-ping"></span>
-                      <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer-fast"></span>
-                    </>
-                  )}
-                  
-                  <span className={`text-2xl transition-transform duration-300 ${isListening ? 'animate-pulse-fast' : 'group-hover/mic:scale-110'}`}>
-                    {isListening ? "⏹" : "🎤"}
-                  </span>
-                  <span className="font-semibold text-base">
-                    {isListening ? "Stop Recording" : "Voice Mode"}
-                  </span>
-                </button>
-                
-                {/* Next/Submit Button */}
-                <button 
-                  onClick={handleNextRound}
-                  disabled={loading}
-                  className="group/submit relative flex-1 py-5 px-6 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-cyan-500 rounded-2xl text-white font-black text-lg shadow-xl shadow-blue-900/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-900/60 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-blue-600 disabled:hover:to-blue-500 overflow-hidden"
-                >
-                  {/* Shimmer Effect */}
-                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/submit:translate-x-full transition-transform duration-1000"></span>
-                  
-                  <span className="relative z-10 flex items-center justify-center gap-3">
-                    {loading ? (
-                      <>
-                        <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span>AI Evaluating...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>{round === totalRounds ? "View Full Analysis" : "Next Round"}</span>
-                        <span className="text-xl group-hover/submit:translate-x-1 transition-transform duration-300">→</span>
-                      </>
-                    )}
-                  </span>
-                </button>
-              </div>
-            </div>
+          <div className="flex gap-4">
+            <button 
+              onClick={toggleRecording}
+              className={`flex-1 py-5 rounded-2xl font-bold transition-all ${
+                isListening ? 'bg-red-600 shadow-lg shadow-red-900/40 text-white' : 'bg-slate-700 text-slate-300'
+              }`}
+            >
+              {isListening ? "⏹ Stop Mic" : "🎤 Start Voice Mode"}
+            </button>
+            <button 
+              onClick={handleNextRound}
+              disabled={loading}
+              className="flex-1 py-5 bg-blue-600 hover:bg-blue-500 rounded-2xl text-white font-black text-xl shadow-xl transition-all disabled:opacity-50"
+            >
+              {loading ? "AI Analyzing..." : "Submit Answer"}
+            </button>
           </div>
         </main>
       </div>
@@ -436,6 +420,43 @@ const DetailedPersonAnalysis = ({ history, total }) => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Question Review & Model Answers Section */}
+          <div className="space-y-8 mt-12">
+            <SectionHeader icon="📚" title="Question Review & Model Answers" />
+            
+            <div className="grid grid-cols-1 gap-6">
+              {history.map((h, i) => (
+                <div key={i} className="bg-slate-900/80 rounded-[2rem] border border-slate-700/50 p-8 shadow-xl">
+                  <div className="flex justify-between items-center mb-6">
+                    <span className="text-blue-400 font-bold uppercase text-xs tracking-widest">Round {h.round}</span>
+                    <span className={`px-4 py-1 rounded-full text-xs font-bold ${h.wasCorrect ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                      {h.wasCorrect ? '✓ Pass' : '✗ Fail'}
+                    </span>
+                  </div>
+                  <h4 className="text-white font-bold text-xl mb-6 underline decoration-blue-500/30 underline-offset-8">
+                    {h.question}
+                  </h4>
+                  <div className="grid lg:grid-cols-2 gap-8">
+                    {/* User's Answer */}
+                    <div className="space-y-3">
+                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Your Response</p>
+                      <div className="p-4 bg-slate-800/50 rounded-xl border border-white/5 text-sm text-slate-300 italic">
+                        "{h.userAnswer || "No answer provided."}"
+                      </div>
+                    </div>
+                    {/* AI Model Answer */}
+                    <div className="space-y-3">
+                      <p className="text-[10px] text-emerald-500 font-bold uppercase tracking-widest">AI Model Answer</p>
+                      <div className="p-4 bg-emerald-900/10 rounded-xl border border-emerald-500/20 text-sm text-emerald-200">
+                        {h.idealAnswer}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 

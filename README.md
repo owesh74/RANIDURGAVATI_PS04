@@ -1,68 +1,80 @@
+```markdown
 # 🚀 Veritas: AI-Powered Multimodal Interview Evaluator
 
-**Veritas** is a high-performance, full-stack AI interview platform developed as a **Hackathon Project conducted at IIIT Nagpur**. It transcends traditional keyword matching by utilizing a **Multimodal Fusion Engine** to analyze candidates across three critical dimensions: **Technical Accuracy (NLP)**, **Verbal Fluency (Linguistic Analysis)**, and **Behavioral Resilience (Computer Vision)**.
+**Veritas** is a high-performance, full-stack AI interview platform developed for the **IIIT Nagpur Hackathon**. It moves beyond simple keyword matching by using a **Multimodal Fusion Engine** to evaluate candidates through three critical lenses: **Technical Accuracy (NLP)**, **Verbal Fluency (Linguistics)**, and **Behavioral Resilience (Computer Vision)**.
+
+---
+
+## 📽️ Live Demonstration & Visuals
+
+> **Placement Tip:** Place your high-impact "Home Screen" image here to immediately show the professional UI.
+
+![Home Screen - Domain Selection](INSERT_LINK_HERE)
+
+---
 
 ## 🌟 Key Features
 
-* **Multimodal AI Analysis:** Fuses data from video (emotion tracking), audio (fluency/filler word detection), and text (semantic similarity).
-* **Rapid Fire Engine:** User-definable interview rounds (Easy: 5, Mid: 10, Hard: 20) to test technical endurance.
-* **Brainy Semantic Matching:** Uses Sentence Transformers to evaluate conceptual understanding rather than rigid keyword matching.
-* **Behavioral Profiling:** Generates a psychological "Confidence Index" and detects performance growth/fatigue over time.
-* **Difficulty-Aware Scoring:** Implements weighted evaluation where harder questions carry more impact on the final verdict.
+### 1. 🧠 Multimodal Fusion Engine
+Veritas doesn't just read your text; it feels your performance.
+* **Semantic NLP:** Uses `SentenceTransformers` (all-MiniLM-L6-v2) to map conceptual understanding rather than rigid word matching.
+* **Emotion HUD:** Real-time facial expression analysis using `DeepFace` to track confidence and stress.
+* **Linguistic Analysis:** Detects verbal fillers (um, uh, like) and calculates a realistic Fluency Score based on speech pace.
+
+### 2. ⚡ Rapid Fire Technical Engine
+Designed to test endurance and quick thinking.
+* **Difficulty Tiers:** Easy (5 Qs), Medium (10 Qs), and Hard (20 Qs) rounds.
+* **Zero-Repeat Logic:** Smart session tracking ensures you never get the same question twice in a single session.
+
+### 3. 📊 Detailed Person Analysis (DPA)
+Post-interview feedback that provides a complete psychological and technical verdict.
+* **Accuracy vs. Fluency:** Side-by-side metrics showing where your technical knowledge and communication skills diverge.
+* **Behavioral Verdict:** Visual markers showing "Smiling/Confident" vs. "Anxious/Unfocused" intervals.
+
+> **Placement Tip:** Insert your "Smiling Face Review" and "Stay Focused Review" images here side-by-side using the table below.
+
+| ![Confident Detection](INSERT_LINK_HERE) | ![Fatigue Detection](INSERT_LINK_HERE) |
+| :---: | :---: |
+| *High Confidence Detected* | *Stay Focused Alert* |
+
+---
 
 ## 🏗️ System Architecture
 
-The project is split into two specialized repositories:
-
-1. **[Frontend & Backend (App Core)](https://github.com/owesh74/RANIDURGAVATI_PS04):** Built with the **MERN Stack** (MongoDB, Express, React, Node.js). Manages user sessions and question banks.
-2. **[AI Engine (The Brain)](https://github.com/owesh74/Ai-Engine-For-Veritas):** A high-speed **FastAPI** service processing:
-* **NLP:** `SentenceTransformers` for technical verification.
-* **Computer Vision:** `DeepFace` for real-time behavioral tracking.
-* **Linguistics:** Custom logic for filler word frequency and clarity.
 
 
+The system is split into two specialized service layers:
+1. **App Core (MERN Stack):** Manages user sessions, question banks (MongoDB), and the React-based hardware interface.
+2. **AI Engine (FastAPI):** An asynchronous Python service that handles the heavy-lifting of NLP and Computer Vision.
 
 ---
 
 ## 🛠️ Tech Stack
 
-### **Frontend**
-
-* **React.js & Tailwind CSS:** Responsive, high-performance UI/UX.
-* **Web Speech API:** Real-time voice-to-text processing.
-
-### **Backend (Core)**
-
-* **Node.js & Express:** Scalable API management.
-* **MongoDB Atlas:** Cloud-native database for question storage.
-
-### **AI Engine**
-
-* **Python & FastAPI:** Asynchronous AI service hosting.
-* **Sentence-Transformers:** Semantic similarity mapping.
-* **DeepFace (OpenCV/TensorFlow):** Visual behavioral analysis.
+* **Frontend:** React.js, Tailwind CSS, Web Speech API (Voice-to-Text).
+* **Backend:** Node.js, Express, MongoDB Atlas (MERN).
+* **AI Core:** Python, FastAPI, Sentence-Transformers, DeepFace (OpenCV/TensorFlow).
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Installation & Setup
 
-### **1. AI Engine Setup**
-
+### 1. AI Engine (The Brain)
 ```bash
 cd ai-engine
 python -m venv venv
-venv\Scripts\activate
+# Windows: venv\Scripts\activate
 pip install -r requirements.txt
 python main.py
 
 ```
 
-### **2. Server Setup**
+### 2. App Core (The Heart)
 
 ```bash
 cd server
 npm install
-node seed.js
+node seed.js # Populates multi-stack question bank
 npm start
 
 ```
@@ -71,5 +83,8 @@ npm start
 
 ## 🤝 Acknowledgments
 
-* **Institution:** Developed during the Hackathon conducted at **Indian Institute of Information Technology (IIIT), Nagpur**.
+* **Institution:** Developed for the Hackathon at **Indian Institute of Information Technology (IIIT), Nagpur**.
 
+```
+
+---

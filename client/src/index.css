@@ -1,10 +1,14 @@
 @import "tailwindcss";
 
-/* Or keep the 3 lines if you prefer v3 compatibility mode */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* In v4, you don't need @tailwind base/components/utilities */
 
+@theme {
+  /* You can define custom colors here if needed */
+  --color-brand-bg: #0f172a;
+}
+
+/* Use standard CSS for the body to avoid linter errors */
 body {
-  @apply bg-[#0f172a] text-white;
+  background-color: #0f172a;
+  color: white;
 }
