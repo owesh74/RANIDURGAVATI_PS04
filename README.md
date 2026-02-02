@@ -6,7 +6,6 @@
 
 <p align="center">
   <strong>🏆 IIIT Nagpur Hackathon | Beyond Keyword Matching—Understanding Context, Emotion & Communication</strong>
-  <strong>Veritas solves this with a Multimodal Fusion Engine powered by 1500+ questions across 14+ technical domains.</strong>
 </p>
 
 <p align="center">
@@ -19,9 +18,20 @@
 
 ## 💡 The Problem
 
-Traditional interview platforms use **primitive keyword matching**—failing when candidates phrase answers differently. They ignore **communication skills**, **confidence levels**, and **behavioral patterns** that real interviewers assess.
+Traditional interview platforms rely on **lexical-based matching**—failing when candidates phrase answers differently. They ignore **communication skills**, **confidence levels**, and **behavioral patterns** that real interviewers assess.
 
-**Veritas solves this with a Multimodal Fusion Engine.**
+**Veritas solves this with a Multimodal Fusion Engine powered by 1500+ questions across 14+ technical domains.**
+
+---
+
+## 🏆 Why Veritas?
+
+| Feature | Legacy Platforms | Veritas AI |
+|---------|------------------|------------|
+| **Logic Matching** | Basic Keyword Search | Semantic Vector Mapping (NLP) |
+| **Non-Verbal Analysis** | None | Live Biometric & Gaze Tracking |
+| **Feedback** | Generic Pass/Fail | Multimodal DPA Report |
+| **Evaluation** | Manual/Static | AI-Powered "Confidence Index" |
 
 ---
 
@@ -61,7 +71,7 @@ Veritas monitors candidates through **Computer Vision AI** to detect confidence,
 - **😊 Confidence Markers**: Smile detection, steady gaze, relaxed expressions
 - **😰 Stress Indicators**: Furrowed brows, anxiety markers, focus dips
 - **📊 Engagement Levels**: Alertness trends across interview duration
-- **👁️ Eye Contact**: Gaze direction and stability analysis
+- **👁️ Eye Contact**: Gaze direction and stability analysis via Mediapipe Iris Landmark Detection
 
 ### **🗣️ Linguistic Analysis**
 | Metric | What We Track | Why It Matters |
@@ -86,14 +96,7 @@ Veritas monitors candidates through **Computer Vision AI** to detect confidence,
 - 🔄 **Zero-repeat logic** (session-based tracking)
 - 📈 Live accuracy graph
 
-### **2. Multimodal Score Fusion**
-```
-Final Score = (Technical Accuracy × 0.5) + 
-              (Fluency Score × 0.25) + 
-              (Behavioral Confidence × 0.25)
-```
-
-### **3. Detailed Performance Analysis (DPA)**
+### **2. Detailed Performance Analysis (DPA)**
 
 <div align="center">
   <img src="https://github.com/user-attachments/assets/b887a12a-4207-4b98-8593-0e50a4bf93eb" alt="Technical Performance Analysis" width="100%"/>
@@ -134,13 +137,32 @@ Final Score = (Technical Accuracy × 0.5) +
 └─────────────────────────────────────────────┘
 ```
 
+### **Multimodal Fusion Formula**
+
+The Veritas Scoring Algorithm:
+
+```
+Final Score = (S × 0.5) + (F × 0.25) + (B × 0.25)
+```
+
+Where:
+- **S** (Semantic Accuracy): NLP vector similarity using cosine distance
+- **F** (Fluency): WPM normalized score with filler word penalty
+- **B** (Behavioral): Average confidence/emotion score from facial analysis
+
 ---
 
 ## 🛠️ Tech Stack
 
-**Frontend**: React.js (Vite), Tailwind CSS, Web Speech API  
+**Frontend**: React.js (Vite), Tailwind CSS v4, Web Speech API  
 **Backend**: Node.js, Express, MongoDB Atlas (MERN)  
 **AI Engine**: Python, FastAPI, SentenceTransformers, DeepFace, OpenCV, TensorFlow
+
+### **AI Model Specifications**
+- **NLP**: `all-MiniLM-L6-v2` (Sentence Transformers) for 384-dimensional dense vector embeddings
+- **Computer Vision**: `VGG-Face` via DeepFace for facial feature extraction
+- **Speech**: Browser-native `Web Speech API` utilizing SAPI 5 / Google Speech engine
+- **Eye Tracking**: Mediapipe Iris Landmark Detection with OpenCV integration
 
 ---
 
@@ -149,10 +171,13 @@ Final Score = (Technical Accuracy × 0.5) +
 ### **Prerequisites**
 ```bash
 - Node.js >= 18.0.0
+- npm >= 9.0.0
 - Python >= 3.9
 - MongoDB Atlas account (or local MongoDB)
 - Git
 ```
+
+> **⚠️ Important**: This platform requires **Camera and Microphone permissions**. Ensure you are running on `localhost` or an `HTTPS` environment, as modern browsers block these APIs on non-secure HTTP origins.
 
 ### **1. AI Engine Setup** 🧠
 ```bash
@@ -179,16 +204,14 @@ cd RANIDURGAVATI_PS04/server
 # Install dependencies
 npm install
 
-# Create .env file
-cat > .env << EOL
+# Create .env file with the following content:
 PORT=5000
-MONGO_URI=YOUR_URL
+MONGO_URI=YOUR_MONGODB_URL
 JWT_SECRET=your_super_secret_key
 FASTAPI_URL=http://localhost:8000
 FRONTEND_URL=http://localhost:5173
-EOL
 
-# Populate question bank
+# Populate question bank (14+ domains, 1500+ questions)
 node seed.js
 
 # Start Express server
@@ -203,11 +226,9 @@ cd client
 # Install dependencies
 npm install
 
-# Create .env file
-cat > .env << EOL
+# Create .env file with the following content:
 VITE_API_BASE_URL=http://localhost:5000
 VITE_AI_ENGINE_URL=http://localhost:8000
-EOL
 
 # Start development server
 npm run dev  # Runs on http://localhost:5173
@@ -217,8 +238,9 @@ npm run dev  # Runs on http://localhost:5173
 
 1. **Open browser**: Navigate to `http://localhost:5173`
 2. **Create account** or use demo credentials
-3. **Select interview track** (Frontend/Backend/Full-Stack)
-4. **Choose difficulty** and begin your AI-powered interview!
+3. **Grant camera/microphone permissions** when prompted
+4. **Select interview track** (Frontend/Backend/Full-Stack)
+5. **Choose difficulty** and begin your AI-powered interview!
 
 ---
 
@@ -321,12 +343,6 @@ git push origin feature/AmazingFeature
 
 Built with 💜 for **IIIT Nagpur Hackathon**
 
-**Special Thanks:**
-- **Hugging Face** for transformer models
-- **DeepFace** team for emotion recognition framework
-- **MongoDB Atlas** for database infrastructure
-- **IIIT Nagpur** mentors for guidance and support
-
 ---
 
 ## 📄 License
@@ -339,6 +355,12 @@ MIT License - See [LICENSE](LICENSE) for details
 
 - **🏠 Main Application**: [RANIDURGAVATI_PS04](https://github.com/owesh74/RANIDURGAVATI_PS04)
 - **🧠 AI Engine**: [Ai-Engine-For-Veritas](https://github.com/owesh74/Ai-Engine-For-Veritas)
+
+---
+
+## 🙏 Acknowledgments
+
+**IIIT Nagpur** mentors for guidance and support throughout the hackathon
 
 ---
 
